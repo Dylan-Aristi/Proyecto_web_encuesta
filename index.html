@@ -48,11 +48,11 @@
                     <i class="fas fa-utensils"></i>
                 </div>
                 <div class="pae-buttons-container">
-                    <button class="pae-button" onclick="goToAttendanceScreen('PAE REFRIGERIO')">
+                    <button class="pae-button" onclick="goToFeedbackScreen('PAE REFRIGERIO')">
                         <i class="fas fa-mug-hot"></i>
                         <span>PAE REFRIGERIO</span>
                     </button>
-                    <button class="pae-button" onclick="goToAttendanceScreen('PAE ALMUERZO')">
+                    <button class="pae-button" onclick="goToFeedbackScreen('PAE ALMUERZO')">
                         <i class="fas fa-utensils"></i>
                         <span>PAE ALMUERZO</span>
                     </button>
@@ -60,75 +60,6 @@
             </div>
             <div class="bottom-button-container">
                 <button class="button-volver" onclick="goToScreen('homeScreen')">VOLVER</button>
-            </div>
-        </div>
-
-        <!-- ==================== PANTALLA 3.5: ATTENDANCE ==================== -->
-        <div id="attendanceScreen" class="screen">
-            <div class="header">
-                <div class="feedback-title" id="attendanceTitle">PAE REFRIGERIO</div>
-                <div class="feedback-subtitle" id="attendanceSubtitle">LUNES</div>
-            </div>
-            
-            <div class="scroll-content" style="justify-content: center; padding-bottom: 80px;">
-                <div class="section-container" style="text-align: center; padding: 40px 20px;">
-                    <div class="section-title" style="font-size: 22px; margin-bottom: 30px;">¿Consumiste esta comida hoy?</div>
-                    <div class="pae-buttons-container" style="padding: 0;">
-                        <button class="pae-button" style="background-color: #4CAF50;" onclick="goToFeedbackScreen()">
-                            <i class="fas fa-check-circle"></i>
-                            <span>SÍ, ASISTÍ</span>
-                        </button>
-                        <button class="pae-button" style="background-color: #f44336;" onclick="goToAbsenceScreen()">
-                            <i class="fas fa-times-circle"></i>
-                            <span>NO ASISTÍ</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bottom-button-container">
-                <button class="button-volver" onclick="goBackToDayScreen()">VOLVER</button>
-            </div>
-        </div>
-
-        <!-- ==================== PANTALLA 3.6: ABSENCE SURVEY ==================== -->
-        <div id="absenceScreen" class="screen">
-            <div class="header">
-                <div class="feedback-title">MOTIVO DE INASISTENCIA</div>
-                <div class="feedback-subtitle" id="absenceSubtitle">LUNES - PAE REFRIGERIO</div>
-            </div>
-            
-            <div class="feedback-scroll">
-                <div class="section-container">
-                    <div class="section-title">Datos del estudiante</div>
-                    <input type="text" class="text-input" id="studentNameInput" placeholder="Nombre completo" style="min-height: 50px; margin-bottom: 15px;">
-                    
-                    <select class="text-input" id="studentGradeInput" style="min-height: 50px; margin-bottom: 15px; appearance: auto; color: #fff;">
-                        <option value="" disabled selected style="color: #AAB8A6;">Selecciona tu grado</option>
-                        <option value="6-1" style="color: #000;">6-1</option>
-                        <option value="6-2" style="color: #000;">6-2</option>
-                        <option value="7-1" style="color: #000;">7-1</option>
-                        <option value="7-2" style="color: #000;">7-2</option>
-                        <option value="8-1" style="color: #000;">8-1</option>
-                        <option value="8-2" style="color: #000;">8-2</option>
-                        <option value="9-1" style="color: #000;">9-1</option>
-                        <option value="9-2" style="color: #000;">9-2</option>
-                        <option value="10-1" style="color: #000;">10-1</option>
-                        <option value="10-2" style="color: #000;">10-2</option>
-                        <option value="11-1" style="color: #000;">11-1</option>
-                        <option value="11-2" style="color: #000;">11-2</option>
-                    </select>
-
-                    <div class="section-title" style="margin-top: 20px;">¿Por qué no asististe?</div>
-                    <textarea class="text-input" id="absenceReasonInput" placeholder="Ejemplo: Estaba enfermo, salí temprano, etc."></textarea>
-                </div>
-            </div>
-
-            <div class="bottom-button-container">
-                <div class="feedback-buttons-container">
-                    <button class="button-volver" onclick="goToScreen('attendanceScreen')">VOLVER</button>
-                    <button class="button-enviar" id="btnEnviarInasistencia" onclick="sendAbsence()">ENVIAR</button>
-                </div>
             </div>
         </div>
 
@@ -196,7 +127,7 @@
             <!-- Botones inferiores -->
             <div class="bottom-button-container">
                 <div class="feedback-buttons-container">
-                    <button class="button-volver" onclick="goBackToAttendanceScreen()">VOLVER</button>
+                    <button class="button-volver" onclick="goBackToDayScreen()">VOLVER</button>
                     <button class="button-enviar" onclick="sendFeedback()">ENVIAR</button>
                 </div>
             </div>
