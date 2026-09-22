@@ -20,26 +20,6 @@
             goToScreen('dayScreen');
         }
 
-        function goToAttendanceScreen(mealType) {
-            if (typeof mealType === 'string') {
-                currentState.selectedMealType = mealType;
-            }
-            
-            document.getElementById('attendanceTitle').textContent = currentState.selectedMealType;
-            document.getElementById('attendanceSubtitle').textContent = currentState.selectedDay;
-            
-            goToScreen('attendanceScreen');
-        }
-
-        function goToAbsenceScreen() {
-            document.getElementById('absenceSubtitle').textContent = `${currentState.selectedDay} - ${currentState.selectedMealType}`;
-            document.getElementById('studentNameInput').value = '';
-            document.getElementById('studentGradeInput').value = '';
-            document.getElementById('absenceReasonInput').value = '';
-            
-            goToScreen('absenceScreen');
-        }
-
         function goToFeedbackScreen(mealType) {
             if (typeof mealType === 'string') {
                 currentState.selectedMealType = mealType;
@@ -66,10 +46,6 @@
 
         function goBackToDayScreen() {
             goToDayScreen(currentState.selectedDay);
-        }
-        
-        function goBackToAttendanceScreen() {
-            goToScreen('attendanceScreen');
         }
 
         // ==================== FUNCIONES DE RATING ====================
@@ -152,57 +128,27 @@
             const datos = {
                 Dia: currentState.selectedDay,
                 Comida: currentState.selectedMealType,
-                Asistencia: 'Sí asistió',
                 Nombre_Estudiante: studentName,
                 Grado: studentGrade,
                 Calificacion: currentState.rating,
-                Recomendaciones: document.getElementById('recommendationsInput').value || 'Ninguna',
-                Motivo_Inasistencia: 'NO APLICA'
-            };
-
-            enviarDatos(datos, btnEnviar);
-        }
-
-        function sendAbsence() {
-            const studentName = document.getElementById('studentNameInput').value.trim();
-            const studentGrade = document.getElementById('studentGradeInput').value;
-            const absenceReason = document.getElementById('absenceReasonInput').value.trim();
-
-            if (!studentName || !studentGrade || !absenceReason) {
-                showCustomAlert('Por favor, completa todos los campos.', 'warning');
-                return;
-            }
-
-            const btnEnviar = document.getElementById('btnEnviarInasistencia');
-            btnEnviar.textContent = 'ENVIANDO...';
-            btnEnviar.disabled = true;
-
-            const datos = {
-                Dia: currentState.selectedDay,
-                Comida: currentState.selectedMealType,
-                Asistencia: 'No asistió',
-                Nombre_Estudiante: studentName,
-                Grado: studentGrade,
-                Calificacion: 'NO APLICA',
-                Recomendaciones: 'NO APLICA',
-                Motivo_Inasistencia: absenceReason
+                Recomendaciones: document.getElementById('recommendationsInput').value || 'Ninguna'
             };
 
             enviarDatos(datos, btnEnviar);
         }
 
         function enviarDatos(datos, btnEnviar) {
-            // Petición al correo (FormSubmit)
-            const emailReq = fetch("https://formsubmit.co/ajax/dylancorrales987@gmail.com", {
+            // Petición al correo (FormSubmit) - Se ejecuta en segundo plano (Fire-and-forget)
+            fetch("https://formsubmit.co/ajax/dylancorrales987@gmail.com", {
                 method: "POST",
                 headers: { 
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify(datos)
-            });
+            }).catch(error => console.log("Error silencioso en el correo:", error));
 
-            // Petición a Google Sheets (usando text/plain para evitar problemas de CORS)
+            // Petición a Google Sheets (muy rápida)
             let sheetsReq;
             if (GOOGLE_SHEETS_URL !== "REEMPLAZA_ESTO_CON_LA_URL_DE_APPS_SCRIPT") {
                 sheetsReq = fetch(GOOGLE_SHEETS_URL, {
@@ -214,11 +160,11 @@
                     body: JSON.stringify(datos)
                 });
             } else {
-                sheetsReq = Promise.resolve(); // Si no hay URL, simplemente resolvemos
+                sheetsReq = Promise.resolve(); 
             }
 
-            // Esperar a que ambas peticiones terminen
-            Promise.all([emailReq, sheetsReq])
+            // Esperar solo a Google Sheets para liberar al usuario casi inmediatamente
+            sheetsReq
             .then(() => {
                 showCustomAlert('¡Gracias!\nLa información ha sido registrada correctamente.', 'success', () => {
                     btnEnviar.textContent = 'ENVIAR';
@@ -242,3 +188,47 @@
             }
             e.preventDefault();
         }, { passive: false });
+
+        // ==================== EFECTOS VISUALES PANTALLA INICIO ====================
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        welcomeScreen.style.position = 'relative';
+        welcomeScreen.style.overflow = 'hidden';
+        
+        const btnIniciar = welcomeScreen.querySelector('.button-large');
+
+        welcomeScreen.addEventListener('click', function(e) {
+            // Si el click no fue sobre el botón "INICIAR"
+            if (!e.target.closest('.button-large')) {
+                
+                // 1. Crear el efecto Ripple (Onda)
+                const ripple = document.createElement('div');
+                ripple.classList.add('ripple-effect');
+                
+                // Establecer un tamaño fijo pequeño para simular la gota
+                const rect = welcomeScreen.getBoundingClientRect();
+                const diameter = 120; // 120 píxeles de diámetro máximo
+                const radius = diameter / 2;
+                
+                ripple.style.width = ripple.style.height = `${diameter}px`;
+                ripple.style.left = `${e.clientX - rect.left - radius}px`;
+                ripple.style.top = `${e.clientY - rect.top - radius}px`;
+                
+                welcomeScreen.appendChild(ripple);
+                
+                // Eliminar el elemento del HTML cuando termine la animación (600ms)
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+
+                // 2. Hacer temblar el botón para llamar la atención
+                // Forzamos un reinicio de la animación por si hacen varios clics seguidos
+                btnIniciar.classList.remove('attention-shake');
+                void btnIniciar.offsetWidth; // Trigger reflow
+                btnIniciar.classList.add('attention-shake');
+                
+                // Remover la clase cuando termine (500ms) para que se pueda volver a usar
+                setTimeout(() => {
+                    btnIniciar.classList.remove('attention-shake');
+                }, 500);
+            }
+        });
